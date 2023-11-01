@@ -1,10 +1,13 @@
 use reqwest::Client;
 use serde_json::json;
 use serde_json::Value;
+extern crate qrcode;
+use qrcode::QrCode;
+use qrcode::render::svg;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> { 
-    let api_key = "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";
+    let api_key = "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";
     let endpoint = "https://api.openai.com/v1/chat/completions";
 
     let request_body = json!({
@@ -27,6 +30,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // contentを取得
     if let Some(content) = response_json["choices"][0]["message"]["content"].as_str() {
         println!("Content: {}", content);
+
+        let code = QrCode::new(content).unwrap();
+
+        let image = code.render()
+        .dark_color(svg::Color("#000000"))
+        .light_color(svg::Color("#ffffff"))
+        .build();
+
+        std::fs::write("qrcode.svg", &image).expect("Unable to write QR code image");
     } else {
         println!("Content not found in the response.");
     }
