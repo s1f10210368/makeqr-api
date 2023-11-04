@@ -12,7 +12,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let api_key = "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";
     let endpoint = "https://api.openai.com/v1/chat/completions";
 
-    // APIリクエストのボディをJSON形式で設定
+    // APIリクエストのボディをJSON形式で設定する
     let request_body = json!({
         "model": "gpt-3.5-turbo",
         "messages": [{"role": "system", "content": "こんにちは!"}]
