@@ -6,6 +6,7 @@ use qrcode::QrCode;
 use qrcode::render::svg;
 /*use qr2term::print_qr;*/
 
+//以下はCHATGPTを使用する際の定型
 #[tokio::main]  // これをつけると非同期関数が使える
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // OpenAI APIの認証キーとエンドポイントを設定
