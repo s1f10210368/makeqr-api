@@ -2,6 +2,8 @@ use reqwest::Client;
 use serde_json::json;
 use serde_json::Value;
 extern crate qrcode;
+extern crate encoding_rs;
+use encoding_rs::SHIFT_JIS;
 use qrcode::QrCode;
 use qrcode::render::svg;
 /*use qr2term::print_qr;*/
@@ -10,7 +12,7 @@ use qrcode::render::svg;
 #[tokio::main]  // これをつけると非同期関数が使える
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // OpenAI APIの認証キーとエンドポイントを設定
-    let api_key = "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";
+    let api_key = "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";
     let endpoint = "https://api.openai.com/v1/chat/completions";
 
     // APIリクエストのボディをJSON形式で設定する
@@ -39,11 +41,21 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // レスポンスから"content"を取得
     if let Some(content) = response_json["choices"][0]["message"]["content"].as_str() {
         println!("Content: {}", content);
-
+        /*
+        // utf-8にエンコード
+        // 日本語QRコード読み取りはShift-JISの方が適している
         let utf8_content = content.as_bytes();
+        */
+        // Shift-JISにエンコード
+        let (content_encoded, _, had_error) = SHIFT_JIS.encode(&content);
+
+        if had_error {
+            println!("エンコード中にエラーが発生");
+            return Err("エンコードエラー:".into());
+        }
 
         // QRコードを生成
-        let code = QrCode::new(utf8_content).unwrap();
+        let code = QrCode::new(&content_encoded).unwrap();
 
         // QRコードをSVG形式でレンダリング
         let image = code.render()
